@@ -1,0 +1,33 @@
+{
+  "name": "dsh-quote-selection",
+  "version": "0.3.0",
+  "description": "Select transcript text to get a Quote / Copy-quote toolbar (Ctrl+L), like Antigravity's quote action.",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/logic.test.mjs"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "inject.js",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "quote",
+    "selection"
+  ]
+}

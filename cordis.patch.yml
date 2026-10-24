@@ -1,0 +1,5 @@
+# dsh-quote-selection bundle patch: mount the host row so the client bundle is
+# discovered and served. The row itself does nothing on the host.
+- insert:
+    - id: dsh-quote-selection
+      name: dsh-quote-selection
