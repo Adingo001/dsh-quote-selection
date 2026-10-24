@@ -27,21 +27,24 @@ index.js  →  ctx.on('webserver/index-inject', rows => rows.push({ kind: 'scrip
 
 ## 样式
 
-克制版配色，只有两组相邻色相，没有彩虹色：
-
-- 「引用」文字渐变 `#4F46E5 → #7C3AED → #C026D3`（靛蓝→紫→洋红）；
-  「复制引用」`#0891B2 → #4F46E5`（青→靛蓝）。均为 `linear-gradient(100deg,…)` + `background-clip: text`，字重 500、字号 13px。
-- 渐变挂在 `.dsh-quote-ink` 内层上，按钮本身保留真实背景，hover 才能正常铺色（`rgba(99,102,241,.08)`，active 更深，过渡 .2s）。
-- 图标是文本字形（`“` / `⧉`），与文字共享同一条渐变。
-- 工具条：`rgba(255,255,255,.72)` + `backdrop-filter: blur(16px) saturate(160%)`，圆角 12px、内边距 4px，
-  阴影三层 `0 0 0 1px rgba(20,20,40,.06), 0 2px 6px rgba(20,20,40,.05), 0 12px 32px rgba(99,102,241,.14)`。
-- 边框 1px 中性描边；`::before` 用 `conic-gradient`（透明 → `#818CF8` → `#C084FC` → 透明）+ `mask-composite` 裁成 1px 细高光，`@property --dsh-quote-a` 驱动角度，9s 绕一圈，只占约 30% 周长。
-- 两个按钮之间是 14px 高的 `rgba(0,0,0,.08)` 短竖线。
-- 出现动画：120ms 淡入 + 上移 4px。
-- 复制成功：`✓ 已复制`，渐变 `#059669 → #0D9488`，1.5s 后工具条消失。
-- 深色主题：底色 `rgba(24,24,32,.72)`，渐变换成 `#818CF8 / #A78BFA / #E879F9 / #22D3EE`，阴影转纯黑 + 淡紫外发光。
-- 选区高亮 `rgba(129,140,248,.22)`。
-- `prefers-reduced-motion: reduce` 时关闭高光绕边与出现动画。
+- 默认文字为深色 `#1F2340`（深色主题 `#E8E9F5`），字重 500、字号 13px、`letter-spacing: .02em`。
+- hover 时 `-webkit-text-fill-color` 过渡到 `transparent`（.25s），露出底下被 `background-clip: text` 裁住的同色系渐变：
+  「引用」`#4F46E5 → #7C3AED`，「复制引用」`#0891B2 → #4F46E5`。
+- 图标改为内联 SVG，1.5px 描边、14px、与文字间距 6px；描边用 `linearGradient`，stop 颜色取 `var(--g1)` / `var(--g2)`，
+  所以两枚图标的渐变可以不同（引用偏紫，复制偏青蓝），深色主题只换变量即可提亮。
+- 工具条材质：`rgba(255,255,255,.72)` + `backdrop-filter: blur(18px) saturate(170%)`，圆角 12px、内边距 5px；
+  阴影 `0 0 0 1px / 0 2px 4px / 0 8px 16px / 0 20px 40px` 四层，外加 `inset 0 1px 0 rgba(255,255,255,.85)` 顶部内高光。
+- `::after` 叠一层 2% 透明度的 `feTurbulence` 噪点（120px 平铺）。
+- 边框 1px `rgba(20,20,40,.08)`；`::before` 用 conic-gradient（透明 → `#A5B4FC` → `#C4B5FD` → 透明，约 40% 周长）
+  配合 `mask-composite` 只留在边框上，`@property --dsh-quote-a` 驱动角度：出现后 2s 绕一圈，hover 再绕一圈，其余时间静止。
+- 按钮 hover 有跟随鼠标的柔光：`radial-gradient(80px at var(--mx) var(--my), rgba(99,102,241,.14), transparent)`，
+  `--mx/--my` 由 `mousemove` 写入；active 时 `scale(.97)`。
+- 出现动画 180ms，`cubic-bezier(.2,.9,.3,1.2)`，从下方 6px、`scale(.96)` 弹出。
+- 复制成功：图标换成 ✓（`pathLength=1` + `stroke-dashoffset` 300ms 描绘），文字变「已复制」`#059669`，1.5s 后淡出收起。
+- 定位：默认在选区上方居中，带 12×8 的毛玻璃三角箭头指向选区；上方空间不足翻到下方，左右与上下都做视口钳制。
+- 选区高亮 `rgba(129,140,248,.22)`；`::highlight` 目前只支持可继承的文字属性，`border-radius` 不生效，所以没走 Custom Highlight API。
+- 深色主题：底 `rgba(28,28,38,.72)`，渐变提亮为 `#818CF8 / #A78BFA / #22D3EE`，阴影转黑 + 淡紫外，内高光降到 8%。
+- `prefers-reduced-motion: reduce` 关闭高光绕边、弹簧入场和鼠标柔光（JS 也不再写 `--mx/--my`）。
 
 ## 实现要点
 
