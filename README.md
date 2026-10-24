@@ -20,10 +20,21 @@ index.js  →  ctx.on('webserver/index-inject', rows => rows.push({ kind: 'scrip
 - 选区在对话正文（`data-slot="conversation.chat.flow"` 或 `data-chat-flow-kind`）或在其他非输入区域时浮出工具条；选在输入框、按钮、链接里不出现。
 - 工具条定位在选区上方居中；上方空间不够时落到选区下方。
 - 「引用」：先放光标 → 再聚焦 → 等两帧 → `execCommand`，用内容变化判断成败，失败降级 `beforeinput` → `paste`。
-- 「复制引用」：优先 `navigator.clipboard.writeText`，失败回退隐藏 textarea + `execCommand('copy')`，按钮文字短暂变成「已复制」。
+- 「复制引用」：优先 `navigator.clipboard.writeText`，失败回退隐藏 textarea + `execCommand('copy')`；成功后按钮变「✓ 已复制」并在 1.5 秒后收起工具条。
 - `Ctrl/Cmd + L`：有选区时直接插入引用（`preventDefault`，不触发浏览器默认行为）。
 - 超过 4000 字符会截断并加省略号。
 - 按 Esc、点击别处、滚动页面都会收起工具条。
+
+## 样式
+
+- 两个按钮都用完整色谱的渐变文字（`background-clip: text`），「引用」从红橙黄起，「复制引用」从青蓝紫起，两条渐变的色序不同。
+- `background-size: 200% 100%` + `@keyframes dsh-quote-flow` 让颜色 3.5s 循环流动；hover 时加速到 1.5s 并加 `0 0 12px rgba(139,92,246,.25)` 光晕。
+- 图标是文本字形（`“` / `⧉`），跟随同一个渐变，无需额外的 SVG 或 mask。
+- 工具条：10px 圆角、白底、1px 渐变边框（`padding-box` / `border-box` 双层背景，兼容性好于 mask）、阴影 `0 6px 20px rgba(139,92,246,.2)`。
+- 复制成功态用绿→青渐变（`#22C55E → #06B6D4`）。
+- 深色主题下两套渐变换成提亮一档的色值，边框与底色同步调整。
+- 选区高亮为 `rgba(139,92,246,.18)`。
+- `prefers-reduced-motion: reduce` 时关闭流动动画。
 
 ## 实现要点
 

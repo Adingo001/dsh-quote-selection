@@ -33,27 +33,49 @@
   var FLOW_SLOT = 'conversation.chat.flow'
   var EDITOR_SELECTOR = '[data-lexical-editor="true"]'
 
+  var GRADIENT =
+    'linear-gradient(90deg,#FF4D4F,#FF9F1C,#FACC15,#22C55E,#06B6D4,#3B82F6,#8B5CF6,#EC4899,#FF4D4F)'
+  var GRADIENT_COPY =
+    'linear-gradient(90deg,#06B6D4,#3B82F6,#8B5CF6,#EC4899,#FF4D4F,#FF9F1C,#FACC15,#22C55E,#06B6D4)'
+  var GRADIENT_DARK =
+    'linear-gradient(90deg,#FF7875,#FFC069,#FFE066,#5CE68A,#4DD6E8,#6BA6FF,#B197FF,#FF86C8,#FF7875)'
+  var GRADIENT_DARK_COPY =
+    'linear-gradient(90deg,#4DD6E8,#6BA6FF,#B197FF,#FF86C8,#FF7875,#FFC069,#FFE066,#5CE68A,#4DD6E8)'
+
   var CSS =
     '#' + ROOT_ID + '{position:fixed;z-index:2147483000;display:none;pointer-events:none;}' +
     '#' + ROOT_ID + '[data-open="true"]{display:block;}' +
-    '#' + ROOT_ID + '>div{pointer-events:auto;display:inline-flex;align-items:stretch;' +
-    'border-radius:8px;border:1px solid rgba(0,0,0,.14);background:#fff;overflow:hidden;' +
-    'font:500 12px/1.4 -apple-system,"Segoe UI","Microsoft YaHei",system-ui,sans-serif;' +
-    'box-shadow:0 6px 18px rgba(0,0,0,.16),0 1px 2px rgba(0,0,0,.08);}' +
-    '#' + ROOT_ID + ' button{margin:0;border:0;background:transparent;color:#1f2328;' +
-    'font:inherit;letter-spacing:.01em;cursor:pointer;white-space:nowrap;user-select:none;' +
-    'display:inline-flex;align-items:center;gap:5px;padding:5px 10px;transition:background-color .12s ease;}' +
-    '#' + ROOT_ID + ' button:hover{background:#f1f2f4;}' +
-    '#' + ROOT_ID + ' button:active{background:#e8eaed;}' +
-    '#' + ROOT_ID + ' button:focus-visible{outline:2px solid #4c8dff;outline-offset:-2px;}' +
-    '#' + ROOT_ID + ' button+button{border-left:1px solid rgba(0,0,0,.08);}' +
-    '#' + ROOT_ID + ' .dsh-quote-glyph{font-size:13px;line-height:1;opacity:.7;}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + '>div{border-color:rgba(255,255,255,.16);background:#26282c;' +
-    'box-shadow:0 6px 18px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4);}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + ' button{color:#e8e8e8;}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + ' button:hover{background:#32353a;}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + ' button:active{background:#3a3e44;}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + ' button+button{border-left-color:rgba(255,255,255,.12);}'
+    '#' + ROOT_ID + '>div{position:relative;isolation:isolate;pointer-events:auto;display:inline-flex;' +
+    'align-items:stretch;border-radius:10px;padding:0;border:1px solid transparent;' +
+    'background:linear-gradient(#fff,#fff) padding-box,' +
+    'linear-gradient(135deg,#FF4D4F,#FACC15,#22C55E,#06B6D4,#8B5CF6,#EC4899) border-box;' +
+    'box-shadow:0 6px 20px rgba(139,92,246,.2);}' +
+    '#' + ROOT_ID + ' button{position:relative;margin:0;border:0;background-color:transparent;' +
+    'font:600 13px/1.3 -apple-system,"Segoe UI","Microsoft YaHei",system-ui,sans-serif;' +
+    'letter-spacing:.01em;cursor:pointer;white-space:nowrap;user-select:none;' +
+    'display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:9px;' +
+    'background-image:' + GRADIENT + ';background-size:200% 100%;background-repeat:repeat;' +
+    '-webkit-background-clip:text;background-clip:text;' +
+    '-webkit-text-fill-color:transparent;color:transparent;' +
+    'animation:dsh-quote-flow 3.5s linear infinite;transition:box-shadow .15s ease;}' +
+    '#' + ROOT_ID + ' button+button{background-image:' + GRADIENT_COPY + ';' +
+    'border-left:1px solid rgba(139,92,246,.14);}' +
+    '#' + ROOT_ID + ' button:hover{animation-duration:1.5s;box-shadow:0 0 12px rgba(139,92,246,.25);}' +
+    '#' + ROOT_ID + ' button:active{box-shadow:0 0 8px rgba(139,92,246,.35);}' +
+    '#' + ROOT_ID + ' button:focus-visible{outline:2px solid #8B5CF6;outline-offset:-2px;}' +
+    '#' + ROOT_ID + ' .dsh-quote-glyph{font-size:14px;line-height:1;}' +
+    '#' + ROOT_ID + ' button.is-copied{background-image:linear-gradient(90deg,#22C55E,#06B6D4,#22C55E);' +
+    'animation-duration:2s;}' +
+    '@keyframes dsh-quote-flow{from{background-position:0% 0;}to{background-position:200% 0;}}' +
+    '::selection{background:rgba(139,92,246,.18);}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + '>div{box-shadow:0 6px 20px rgba(139,92,246,.28);' +
+    'background:linear-gradient(#26282c,#26282c) padding-box,' +
+    'linear-gradient(135deg,#FF7875,#FFE066,#5CE68A,#4DD6E8,#B197FF,#FF86C8) border-box;}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + ' button{background-image:' + GRADIENT_DARK + ';}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + ' button+button{background-image:' + GRADIENT_DARK_COPY + ';' +
+    'border-left-color:rgba(255,255,255,.16);}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + ' button.is-copied{background-image:linear-gradient(90deg,#5CE68A,#4DD6E8,#5CE68A);}' +
+    '@media (prefers-reduced-motion: reduce){#' + ROOT_ID + ' button{animation:none;background-position:0% 0;}}'
 
   /** Nearest transcript element for a node, or null outside the transcript. */
   function transcriptOf(node) {
@@ -276,19 +298,27 @@
       attempt('exec')
     }
 
-    function flashCopy(state) {
+    function flashCopy(state, opts) {
+      opts = opts || {}
       var label = copyBtn.lastChild
       window.clearTimeout(flashTimer)
+      if (opts.copied) copyBtn.classList.add('is-copied')
       label.textContent = state
-      flashTimer = window.setTimeout(function () {
-        label.textContent = '复制引用'
-      }, 1200)
+      flashTimer = window.setTimeout(
+        function () {
+          copyBtn.classList.remove('is-copied')
+          label.textContent = '复制引用'
+          // A successful copy dissolves the toolbar; a failure leaves it up.
+          if (opts.hide) hide()
+        },
+        opts.copied ? 1500 : 1200,
+      )
     }
 
     function copyQuote(text) {
       var payload = quotePayload(text)
       function done() {
-        flashCopy('已复制')
+        flashCopy('✓ 已复制', { copied: true, hide: true })
       }
       function fallback() {
         try {
