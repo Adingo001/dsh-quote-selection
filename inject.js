@@ -50,6 +50,7 @@
 
     // ── frosted bar ─────────────────────────────────────────────────────────
     '#' + ROOT_ID + '>div{position:relative;display:inline-flex;align-items:stretch;padding:5px;' +
+    'pointer-events:auto;' +
     'border-radius:12px;border:1px solid rgba(20,20,40,.08);background:rgba(255,255,255,.72);' +
     '-webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);' +
     'box-shadow:0 0 0 1px rgba(20,20,40,.06),0 2px 4px rgba(20,20,40,.04),0 8px 16px rgba(20,20,40,.06),' +
@@ -91,7 +92,7 @@
 
     // ── ink: solid text until hover, then the clipped gradient shows through ─
     '#' + ROOT_ID + ' .dsh-quote-ink{position:relative;z-index:1;display:inline-flex;align-items:center;' +
-    'gap:6px;padding:7px 12px;letter-spacing:.02em;' +
+    'gap:6px;padding:7px 12px;letter-spacing:.02em;user-select:none;' +
     'font:500 13px/1.2 -apple-system,"Segoe UI","Microsoft YaHei",system-ui,sans-serif;' +
     'color:#1F2340;-webkit-text-fill-color:#1F2340;' +
     'background-image:linear-gradient(100deg,var(--g1),var(--g2));' +
@@ -591,6 +592,12 @@
           buttons: document.querySelectorAll('#' + ROOT_ID + ' button').length,
           icons: document.querySelectorAll('#' + ROOT_ID + ' svg').length,
           caret: !!document.querySelector('#' + ROOT_ID + ' .dsh-quote-caret'),
+          // Regression guard: the root disables pointer events, so the bar must
+          // opt back in or nothing in it can be clicked.
+          clickable: (function () {
+            var el = document.querySelector('#' + ROOT_ID + '>div')
+            return el ? getComputedStyle(el).pointerEvents : 'missing'
+          })(),
           style: !!document.querySelector('style[data-dsh-quote-selection]'),
           flow: !!document.querySelector('[data-slot="' + FLOW_SLOT + '"]'),
           editors: document.querySelectorAll(EDITOR_SELECTOR).length,
