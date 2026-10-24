@@ -1,6 +1,6 @@
 {
   "name": "dsh-quote-selection",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Select transcript text to get a Quote / Copy-quote toolbar (Ctrl+L), like Antigravity's quote action.",
   "license": "MIT",
   "type": "module",

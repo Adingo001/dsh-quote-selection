@@ -46,6 +46,20 @@ index.js  →  ctx.on('webserver/index-inject', rows => rows.push({ kind: 'scrip
 - 深色主题：底 `rgba(28,28,38,.72)`，渐变提亮为 `#818CF8 / #A78BFA / #22D3EE`，阴影转黑 + 淡紫外，内高光降到 8%。
 - `prefers-reduced-motion: reduce` 关闭高光绕边、弹簧入场和鼠标柔光（JS 也不再写 `--mx/--my`）。
 
+## 字体
+
+- 族栈拉丁优先，中文回退：
+  `Inter, Geist, "HarmonyOS Sans SC", "MiSans", "PingFang SC", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei UI", system-ui, sans-serif`。
+  本机装了 **Noto Sans SC** 与 **Microsoft YaHei UI**，Inter／Geist／HarmonyOS Sans／MiSans 都没有，所以实际先落到 Noto Sans SC。
+- **不加载 web font**：应用本身不带字体资源，引 CDN 只会多一次 swap 闪烁；跨字体回退的抖动改用**固定最小宽度**兜底（引用 74px、复制引用 102px）。
+- 13.5px / `line-height: 1`，主操作「引用」600、次操作「复制引用」500；`letter-spacing: .04em`（全中文文案）。
+- `font-feature-settings: "tnum"`（只影响数字，当前文案无数字不影响外观）。
+- 图标 14px、间距 6px、线宽 1.5px；文字 `padding-top: 1px` 做光学对齐。
+- 常态 `#2B2F4A`（深色 `#E8E9F5`），hover 才过渡成渐变文字（`-webkit-text-fill-color` → transparent，.25s）。
+- 开启 `-webkit-font-smoothing: antialiased`、`-moz-osx-font-smoothing: grayscale`、`text-rendering: optimizeLegibility`；浅色加 `text-shadow: 0 1px 0 rgba(255,255,255,.6)`，深色去掉。
+- `user-select: none` + `white-space: nowrap`。
+
+
 ## 实现要点
 
 - 输入框是 Lexical 的 `contenteditable`（`[data-lexical-editor="true"]`）。Lexical 在**获得焦点时**才采纳 DOM 选区，所以顺序必须是“先放光标、再 focus”，命令还要等两帧；`execCommand` 即使被 Lexical 丢弃也返回 true，因此用 `editor.textContent` 前后比对判断是否真的写入。

@@ -91,13 +91,26 @@
     'transform:translateY(-50%);width:1px;height:14px;background:rgba(0,0,0,.08);z-index:1;}' +
 
     // ── ink: solid text until hover, then the clipped gradient shows through ─
+    // Latin-first stack so digits and Latin run on Inter/Geist when present and
+    // Chinese falls through to the first installed CJK face. No web font is
+    // loaded: the app ships none, and a CDN face would only add a swap flash.
     '#' + ROOT_ID + ' .dsh-quote-ink{position:relative;z-index:1;display:inline-flex;align-items:center;' +
-    'gap:6px;padding:7px 12px;letter-spacing:.02em;user-select:none;' +
-    'font:500 13px/1.2 -apple-system,"Segoe UI","Microsoft YaHei",system-ui,sans-serif;' +
-    'color:#1F2340;-webkit-text-fill-color:#1F2340;' +
+    'justify-content:center;gap:6px;padding:7px 12px;white-space:nowrap;user-select:none;' +
+    'font-family:Inter,Geist,"HarmonyOS Sans SC","MiSans","PingFang SC","Source Han Sans SC",' +
+    '"Noto Sans SC","Microsoft YaHei UI",system-ui,sans-serif;' +
+    'font-size:13.5px;font-weight:500;line-height:1;letter-spacing:.04em;' +
+    'font-feature-settings:"tnum";' +
+    '-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;' +
+    'color:#2B2F4A;-webkit-text-fill-color:#2B2F4A;' +
+    'text-shadow:0 1px 0 rgba(255,255,255,.6);' +
     'background-image:linear-gradient(100deg,var(--g1),var(--g2));' +
     '-webkit-background-clip:text;background-clip:text;' +
     'transition:-webkit-text-fill-color .25s ease,color .25s ease;}' +
+    // Primary action is heavier; fixed minimums keep the bar from resizing when
+    // the font stack resolves to a different face.
+    '#' + ROOT_ID + ' button:first-child .dsh-quote-ink{font-weight:600;min-width:74px;}' +
+    '#' + ROOT_ID + ' button+button .dsh-quote-ink{font-weight:500;min-width:102px;}' +
+    '#' + ROOT_ID + ' .dsh-quote-label{padding-top:1px;}' +
     '#' + ROOT_ID + ' button:hover .dsh-quote-ink{color:transparent;-webkit-text-fill-color:transparent;}' +
     '#' + ROOT_ID + ' button.is-copied .dsh-quote-ink{background-image:none;' +
     'color:#059669;-webkit-text-fill-color:#059669;}' +
@@ -140,7 +153,8 @@
     'body[data-ds-dark-theme] #' + ROOT_ID + '>div::before{' +
     'background:conic-gradient(from var(--dsh-quote-a),transparent 0turn,transparent .02turn,' +
     '#818CF8 .12turn,#C084FC .28turn,transparent .42turn,transparent 1turn);}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + ' .dsh-quote-ink{color:#E8E9F5;-webkit-text-fill-color:#E8E9F5;}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + ' .dsh-quote-ink{color:#E8E9F5;-webkit-text-fill-color:#E8E9F5;' +
+    'text-shadow:none;}' +
     'body[data-ds-dark-theme] #' + ROOT_ID + ' button{--g1:#818CF8;--g2:#A78BFA;}' +
     'body[data-ds-dark-theme] #' + ROOT_ID + ' button+button{--g1:#22D3EE;--g2:#818CF8;}' +
     'body[data-ds-dark-theme] #' + ROOT_ID + ' button.is-copied{--g1:#34D399;--g2:#2DD4BF;}' +
