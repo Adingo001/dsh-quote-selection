@@ -27,14 +27,21 @@ index.js  →  ctx.on('webserver/index-inject', rows => rows.push({ kind: 'scrip
 
 ## 样式
 
-- 两个按钮都用完整色谱的渐变文字（`background-clip: text`），「引用」从红橙黄起，「复制引用」从青蓝紫起，两条渐变的色序不同。
-- `background-size: 200% 100%` + `@keyframes dsh-quote-flow` 让颜色 3.5s 循环流动；hover 时加速到 1.5s 并加 `0 0 12px rgba(139,92,246,.25)` 光晕。
-- 图标是文本字形（`“` / `⧉`），跟随同一个渐变，无需额外的 SVG 或 mask。
-- 工具条：10px 圆角、白底、1px 渐变边框（`padding-box` / `border-box` 双层背景，兼容性好于 mask）、阴影 `0 6px 20px rgba(139,92,246,.2)`。
-- 复制成功态用绿→青渐变（`#22C55E → #06B6D4`）。
-- 深色主题下两套渐变换成提亮一档的色值，边框与底色同步调整。
-- 选区高亮为 `rgba(139,92,246,.18)`。
-- `prefers-reduced-motion: reduce` 时关闭流动动画。
+克制版配色，只有两组相邻色相，没有彩虹色：
+
+- 「引用」文字渐变 `#4F46E5 → #7C3AED → #C026D3`（靛蓝→紫→洋红）；
+  「复制引用」`#0891B2 → #4F46E5`（青→靛蓝）。均为 `linear-gradient(100deg,…)` + `background-clip: text`，字重 500、字号 13px。
+- 渐变挂在 `.dsh-quote-ink` 内层上，按钮本身保留真实背景，hover 才能正常铺色（`rgba(99,102,241,.08)`，active 更深，过渡 .2s）。
+- 图标是文本字形（`“` / `⧉`），与文字共享同一条渐变。
+- 工具条：`rgba(255,255,255,.72)` + `backdrop-filter: blur(16px) saturate(160%)`，圆角 12px、内边距 4px，
+  阴影三层 `0 0 0 1px rgba(20,20,40,.06), 0 2px 6px rgba(20,20,40,.05), 0 12px 32px rgba(99,102,241,.14)`。
+- 边框 1px 中性描边；`::before` 用 `conic-gradient`（透明 → `#818CF8` → `#C084FC` → 透明）+ `mask-composite` 裁成 1px 细高光，`@property --dsh-quote-a` 驱动角度，9s 绕一圈，只占约 30% 周长。
+- 两个按钮之间是 14px 高的 `rgba(0,0,0,.08)` 短竖线。
+- 出现动画：120ms 淡入 + 上移 4px。
+- 复制成功：`✓ 已复制`，渐变 `#059669 → #0D9488`，1.5s 后工具条消失。
+- 深色主题：底色 `rgba(24,24,32,.72)`，渐变换成 `#818CF8 / #A78BFA / #E879F9 / #22D3EE`，阴影转纯黑 + 淡紫外发光。
+- 选区高亮 `rgba(129,140,248,.22)`。
+- `prefers-reduced-motion: reduce` 时关闭高光绕边与出现动画。
 
 ## 实现要点
 

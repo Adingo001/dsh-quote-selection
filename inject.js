@@ -33,49 +33,64 @@
   var FLOW_SLOT = 'conversation.chat.flow'
   var EDITOR_SELECTOR = '[data-lexical-editor="true"]'
 
-  var GRADIENT =
-    'linear-gradient(90deg,#FF4D4F,#FF9F1C,#FACC15,#22C55E,#06B6D4,#3B82F6,#8B5CF6,#EC4899,#FF4D4F)'
-  var GRADIENT_COPY =
-    'linear-gradient(90deg,#06B6D4,#3B82F6,#8B5CF6,#EC4899,#FF4D4F,#FF9F1C,#FACC15,#22C55E,#06B6D4)'
-  var GRADIENT_DARK =
-    'linear-gradient(90deg,#FF7875,#FFC069,#FFE066,#5CE68A,#4DD6E8,#6BA6FF,#B197FF,#FF86C8,#FF7875)'
-  var GRADIENT_DARK_COPY =
-    'linear-gradient(90deg,#4DD6E8,#6BA6FF,#B197FF,#FF86C8,#FF7875,#FFC069,#FFE066,#5CE68A,#4DD6E8)'
+  var INK = 'linear-gradient(100deg,#4F46E5,#7C3AED,#C026D3)'
+  var INK_COPY = 'linear-gradient(100deg,#0891B2,#4F46E5)'
+  var INK_COPIED = 'linear-gradient(100deg,#059669,#0D9488)'
+  var INK_DARK = 'linear-gradient(100deg,#818CF8,#A78BFA,#E879F9)'
+  var INK_DARK_COPY = 'linear-gradient(100deg,#22D3EE,#818CF8)'
+  var INK_DARK_COPIED = 'linear-gradient(100deg,#34D399,#2DD4BF)'
 
   var CSS =
+    '@property --dsh-quote-a{syntax:"<angle>";initial-value:0deg;inherits:false;}' +
     '#' + ROOT_ID + '{position:fixed;z-index:2147483000;display:none;pointer-events:none;}' +
     '#' + ROOT_ID + '[data-open="true"]{display:block;}' +
-    '#' + ROOT_ID + '>div{position:relative;isolation:isolate;pointer-events:auto;display:inline-flex;' +
-    'align-items:stretch;border-radius:10px;padding:0;border:1px solid transparent;' +
-    'background:linear-gradient(#fff,#fff) padding-box,' +
-    'linear-gradient(135deg,#FF4D4F,#FACC15,#22C55E,#06B6D4,#8B5CF6,#EC4899) border-box;' +
-    'box-shadow:0 6px 20px rgba(139,92,246,.2);}' +
-    '#' + ROOT_ID + ' button{position:relative;margin:0;border:0;background-color:transparent;' +
-    'font:600 13px/1.3 -apple-system,"Segoe UI","Microsoft YaHei",system-ui,sans-serif;' +
-    'letter-spacing:.01em;cursor:pointer;white-space:nowrap;user-select:none;' +
-    'display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:9px;' +
-    'background-image:' + GRADIENT + ';background-size:200% 100%;background-repeat:repeat;' +
+    // frosted bar: translucent white, blur, 12px radius, 4px padding
+    '#' + ROOT_ID + '>div{position:relative;display:inline-flex;align-items:stretch;padding:4px;' +
+    'border-radius:12px;border:1px solid rgba(20,20,40,.06);background:rgba(255,255,255,.72);' +
+    '-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);' +
+    'box-shadow:0 0 0 1px rgba(20,20,40,.06),0 2px 6px rgba(20,20,40,.05),0 12px 32px rgba(99,102,241,.14);' +
+    'animation:dsh-quote-in 120ms ease-out both;}' +
+    // 1px masked conic highlight, ~30% of the perimeter, one lap every 9s
+    '#' + ROOT_ID + '>div::before{content:"";position:absolute;inset:-1px;border-radius:12px;padding:1px;' +
+    'pointer-events:none;' +
+    'background:conic-gradient(from var(--dsh-quote-a),transparent .00turn,#818CF8 .08turn,' +
+    '#C084FC .16turn,transparent .24turn,transparent 1turn);' +
+    '-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);' +
+    'mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);' +
+    '-webkit-mask-composite:xor;mask-composite:exclude;' +
+    'animation:dsh-quote-sweep 9s linear infinite;}' +
+    '#' + ROOT_ID + ' button{position:relative;margin:0;border:0;background:transparent;padding:0;' +
+    'border-radius:8px;cursor:pointer;white-space:nowrap;transition:background-color .2s ease;}' +
+    '#' + ROOT_ID + ' button:hover{background:rgba(99,102,241,.08);}' +
+    '#' + ROOT_ID + ' button:active{background:rgba(99,102,241,.14);}' +
+    '#' + ROOT_ID + ' button:focus-visible{outline:2px solid #818CF8;outline-offset:2px;}' +
+    // gradient lives on the ink span so the button keeps a real background for hover
+    '#' + ROOT_ID + ' .dsh-quote-ink{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;' +
+    'font:500 13px/1.3 -apple-system,"Segoe UI","Microsoft YaHei",system-ui,sans-serif;' +
+    'letter-spacing:.01em;background-image:' + INK + ';' +
     '-webkit-background-clip:text;background-clip:text;' +
-    '-webkit-text-fill-color:transparent;color:transparent;' +
-    'animation:dsh-quote-flow 3.5s linear infinite;transition:box-shadow .15s ease;}' +
-    '#' + ROOT_ID + ' button+button{background-image:' + GRADIENT_COPY + ';' +
-    'border-left:1px solid rgba(139,92,246,.14);}' +
-    '#' + ROOT_ID + ' button:hover{animation-duration:1.5s;box-shadow:0 0 12px rgba(139,92,246,.25);}' +
-    '#' + ROOT_ID + ' button:active{box-shadow:0 0 8px rgba(139,92,246,.35);}' +
-    '#' + ROOT_ID + ' button:focus-visible{outline:2px solid #8B5CF6;outline-offset:-2px;}' +
+    '-webkit-text-fill-color:transparent;color:transparent;}' +
+    '#' + ROOT_ID + ' button+button .dsh-quote-ink{background-image:' + INK_COPY + ';}' +
+    // short hairline between the two actions
+    '#' + ROOT_ID + ' button+button::before{content:"";position:absolute;left:-1px;top:50%;' +
+    'transform:translateY(-50%);width:1px;height:14px;background:rgba(0,0,0,.08);}' +
     '#' + ROOT_ID + ' .dsh-quote-glyph{font-size:14px;line-height:1;}' +
-    '#' + ROOT_ID + ' button.is-copied{background-image:linear-gradient(90deg,#22C55E,#06B6D4,#22C55E);' +
-    'animation-duration:2s;}' +
-    '@keyframes dsh-quote-flow{from{background-position:0% 0;}to{background-position:200% 0;}}' +
-    '::selection{background:rgba(139,92,246,.18);}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + '>div{box-shadow:0 6px 20px rgba(139,92,246,.28);' +
-    'background:linear-gradient(#26282c,#26282c) padding-box,' +
-    'linear-gradient(135deg,#FF7875,#FFE066,#5CE68A,#4DD6E8,#B197FF,#FF86C8) border-box;}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + ' button{background-image:' + GRADIENT_DARK + ';}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + ' button+button{background-image:' + GRADIENT_DARK_COPY + ';' +
-    'border-left-color:rgba(255,255,255,.16);}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + ' button.is-copied{background-image:linear-gradient(90deg,#5CE68A,#4DD6E8,#5CE68A);}' +
-    '@media (prefers-reduced-motion: reduce){#' + ROOT_ID + ' button{animation:none;background-position:0% 0;}}'
+    '#' + ROOT_ID + ' button.is-copied .dsh-quote-ink{background-image:' + INK_COPIED + ';}' +
+    '@keyframes dsh-quote-in{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}' +
+    '@keyframes dsh-quote-sweep{to{--dsh-quote-a:1turn;}}' +
+    '::selection{background:rgba(129,140,248,.22);color:inherit;}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + '>div{background:rgba(24,24,32,.72);' +
+    'border-color:rgba(255,255,255,.08);' +
+    'box-shadow:0 0 0 1px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.35),0 12px 32px rgba(139,92,246,.18);}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + ' .dsh-quote-ink{background-image:' + INK_DARK + ';}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + ' button+button .dsh-quote-ink{background-image:' + INK_DARK_COPY + ';}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + ' button+button::before{background:rgba(255,255,255,.10);}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + ' button:hover{background:rgba(129,140,248,.12);}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + ' button:active{background:rgba(129,140,248,.18);}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + ' button.is-copied .dsh-quote-ink{background-image:' + INK_DARK_COPIED + ';}' +
+    '@media (prefers-reduced-motion: reduce){' +
+    '#' + ROOT_ID + '>div{animation:none;}' +
+    '#' + ROOT_ID + '>div::before{animation:none;}}'
 
   /** Nearest transcript element for a node, or null outside the transcript. */
   function transcriptOf(node) {
@@ -137,14 +152,18 @@
       btn.type = 'button'
       btn.title = title
       btn.setAttribute('aria-label', title)
+      var ink = document.createElement('span')
+      ink.className = 'dsh-quote-ink'
       var glyph = document.createElement('span')
       glyph.className = 'dsh-quote-glyph'
       glyph.textContent = glyphText
       glyph.setAttribute('aria-hidden', 'true')
       var label = document.createElement('span')
+      label.className = 'dsh-quote-label'
       label.textContent = labelText
-      btn.appendChild(glyph)
-      btn.appendChild(label)
+      ink.appendChild(glyph)
+      ink.appendChild(label)
+      btn.appendChild(ink)
       return btn
     }
 
@@ -300,7 +319,7 @@
 
     function flashCopy(state, opts) {
       opts = opts || {}
-      var label = copyBtn.lastChild
+      var label = copyBtn.querySelector('.dsh-quote-label')
       window.clearTimeout(flashTimer)
       if (opts.copied) copyBtn.classList.add('is-copied')
       label.textContent = state
