@@ -69,10 +69,16 @@ index.js  →  ctx.on('webserver/index-inject', rows => rows.push({ kind: 'scrip
 ## 安装
 
 ```powershell
-dsh plugin --profile desktop add link:C:/Users/32926/Documents/deepseek-harness/default-workspace/dsh-quote-selection
+# 从 GitHub 安装（任意机器；把 desktop 换成你自己的 profile 名）
+dsh plugin --profile desktop add -w github:Adingo001/dsh-quote-selection
+
+# 本地开发：link 到你自己的克隆路径
+dsh plugin --profile desktop add link:/path/to/dsh-quote-selection
 ```
 
-重启桌面客户端后生效（注入表在宿主启动时收集）。
+`-w`（pnpm 的 `--workspace-root`）在 profile 目录这个 workspace 根上是显式声明，加上更稳；实测不带也能装。
+
+安装后需要**重启 dsh**（注入表在宿主启动时一次性收集，桌面端只认启动时的快照）。
 
 ## 诊断
 
