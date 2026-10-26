@@ -54,12 +54,12 @@
     '#' + ROOT_ID + '[data-open="true"]{display:block;}' +
 
     // ── frosted bar ─────────────────────────────────────────────────────────
-    '#' + ROOT_ID + '>div{position:relative;display:inline-flex;align-items:stretch;padding:5px;' +
+    '#' + ROOT_ID + '>div{position:relative;display:inline-flex;align-items:stretch;padding:6px;gap:6px;' +
     'pointer-events:auto;' +
-    'border-radius:12px;border:1px solid rgba(20,20,40,.08);background:rgba(255,255,255,.72);' +
-    '-webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);' +
-    'box-shadow:0 0 0 1px rgba(20,20,40,.06),0 2px 6px rgba(20,20,40,.05),0 4px 42px rgba(20,20,40,.06),' +
-    '0 20px 40px rgba(99,102,241,.14),inset 0 1px 0 rgba(255,255,255,.85);' +
+    'border-radius:16px;border:1px solid rgba(20,20,40,.07);background:rgba(255,255,255,.78);' +
+    '-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);' +
+    'box-shadow:0 0 0 1px rgba(20,20,40,.05),0 2px 8px rgba(20,20,40,.05),0 6px 44px rgba(20,20,40,.07),' +
+    '0 22px 48px rgba(99,102,241,.16),inset 0 1px 0 rgba(255,255,255,.9);' +
     'animation:dsh-quote-in var(--qt-fast) var(--qt-ease) both;}' +
 
     // ── border beam ─────────────────────────────────────────────────────────
@@ -67,7 +67,7 @@
     // head, masked to the ring and bloomed with layered drop-shadows. Sizes
     // follow the library's `size` prop through --beam-arc (md 62deg, sm 38deg,
     // line 16deg); colour follows --beam-* so variants stay one declaration.
-    '#' + ROOT_ID + '>div::before{content:"";position:absolute;inset:-1px;border-radius:12px;padding:1px;' +
+    '#' + ROOT_ID + '>div::before{content:"";position:absolute;inset:-1px;border-radius:16px;padding:1px;' +
     'pointer-events:none;' +
     '--beam-arc:62deg;' +
     'background:conic-gradient(from var(--dsh-quote-a),' +
@@ -91,34 +91,39 @@
     '#' + ROOT_ID + '>div.is-sweeping button+button .dsh-quote-ink{animation-delay:var(--qt-stagger);}' +
 
     // grain
-    '#' + ROOT_ID + '>div::after{content:"";position:absolute;inset:0;border-radius:12px;' +
+    '#' + ROOT_ID + '>div::after{content:"";position:absolute;inset:0;border-radius:16px;' +
     'pointer-events:none;opacity:.02;background-image:' + NOISE + ';background-size:120px 120px;}' +
 
     // ── buttons ─────────────────────────────────────────────────────────────
-    '#' + ROOT_ID + ' button{position:relative;margin:0;border:0;background:transparent;padding:0;' +
-    'border-radius:8px;cursor:pointer;white-space:nowrap;' +
+    // Each action is its own chip: a faint surface with a hairline inset ring,
+    // so the toolbar reads as two controls instead of one slab.
+    '#' + ROOT_ID + ' button{position:relative;margin:0;border:0;padding:0;' +
+    'border-radius:12px;cursor:pointer;white-space:nowrap;' +
+    'background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 1px rgba(20,20,40,.05);' +
     '--g1:#4F46E5;--g2:#7C3AED;' +
     'transition:background-color 160ms ease,box-shadow 160ms ease,transform 120ms ease;}' +
+    '#' + ROOT_ID + ' button:hover{background:rgba(99,102,241,.10);' +
+    'box-shadow:inset 0 0 0 1px rgba(129,140,248,.28),0 0 12px rgba(99,102,241,.12);}' +
     '#' + ROOT_ID + ' button+button{--g1:#0891B2;--g2:#4F46E5;}' +
-    '#' + ROOT_ID + ' button:active{transform:scale(.97);}' +
+    '#' + ROOT_ID + ' button:active{transform:scale(.97);background:rgba(99,102,241,.16);}' +
     '#' + ROOT_ID + ' button:focus-visible{outline:2px solid #818CF8;outline-offset:2px;}' +
 
     // cursor-following glow, behind the ink
-    '#' + ROOT_ID + ' button::after{content:"";position:absolute;inset:0;border-radius:8px;z-index:0;' +
+    '#' + ROOT_ID + ' button::after{content:"";position:absolute;inset:0;border-radius:12px;z-index:0;' +
     'pointer-events:none;opacity:0;transition:opacity .2s ease;' +
     'background:radial-gradient(80px at var(--mx,50%) var(--my,50%),rgba(99,102,241,.14),transparent 70%);}' +
     '#' + ROOT_ID + ' button:hover::after{opacity:1;}' +
 
     // 1px × 14px divider between the actions
-    '#' + ROOT_ID + ' button+button::before{content:"";position:absolute;left:0;top:50%;' +
-    'transform:translateY(-50%);width:1px;height:14px;background:rgba(0,0,0,.08);z-index:1;}' +
+    // The chips already separate themselves with a gap and their own hairline
+    // ring, so the old 1px divider is gone.
 
     // ── ink: solid text until hover, then the clipped gradient shows through ─
     // Latin-first stack so digits and Latin run on Inter/Geist when present and
     // Chinese falls through to the first installed CJK face. No web font is
     // loaded: the app ships none, and a CDN face would only add a swap flash.
     '#' + ROOT_ID + ' .dsh-quote-ink{position:relative;z-index:1;display:inline-flex;align-items:center;' +
-    'justify-content:center;gap:6px;padding:7px 12px;white-space:nowrap;user-select:none;' +
+    'justify-content:center;gap:7px;padding:8px 14px;white-space:nowrap;user-select:none;' +
     'font-family:Inter,Geist,"HarmonyOS Sans SC","MiSans","PingFang SC","Source Han Sans SC",' +
     '"Noto Sans SC","Microsoft YaHei UI",system-ui,sans-serif;' +
     'font-size:13.5px;font-weight:500;line-height:1;letter-spacing:.04em;' +
@@ -141,9 +146,9 @@
     '#' + ROOT_ID + ' button.is-copied:hover .dsh-quote-ink{color:#059669;-webkit-text-fill-color:#059669;}' +
 
     // ── icons ───────────────────────────────────────────────────────────────
-    '#' + ROOT_ID + ' .dsh-quote-icon{width:14px;height:14px;flex:none;overflow:visible;}' +
+    '#' + ROOT_ID + ' .dsh-quote-icon{width:15px;height:15px;flex:none;overflow:visible;}' +
     '#' + ROOT_ID + ' .dsh-quote-icon path,#' + ROOT_ID + ' .dsh-quote-icon rect{' +
-    'fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}' +
+    'fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}' +
     '#' + ROOT_ID + ' .dsh-quote-icon.is-check{display:none;}' +
     '#' + ROOT_ID + ' .is-copied .dsh-quote-icon.is-check{display:inline;}' +
     '#' + ROOT_ID + ' .is-copied .dsh-quote-icon.is-copy{display:none;}' +
@@ -174,18 +179,17 @@
     'border-color:rgba(255,255,255,.10);' +
     'box-shadow:0 0 0 1px rgba(0,0,0,.5),0 2px 4px rgba(0,0,0,.4),0 8px 16px rgba(0,0,0,.35),' +
     '0 20px 40px rgba(139,92,246,.18),inset 0 1px 0 rgba(255,255,255,.08);}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + '>div::before{' +
-    'background:conic-gradient(from var(--dsh-quote-a),transparent 0turn,transparent .02turn,' +
-    '#818CF8 .12turn,#C084FC .28turn,transparent .42turn,transparent 1turn);}' +
     'body[data-ds-dark-theme] #' + ROOT_ID + ' .dsh-quote-ink{color:#E8E9F5;-webkit-text-fill-color:#E8E9F5;' +
     'text-shadow:none;}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + ' button{--g1:#818CF8;--g2:#A78BFA;}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + ' button{--g1:#818CF8;--g2:#A78BFA;' +
+    'background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + ' button:hover{background:rgba(129,140,248,.16);' +
+    'box-shadow:inset 0 0 0 1px rgba(129,140,248,.35),0 0 12px rgba(129,140,248,.15);}' +
     'body[data-ds-dark-theme] #' + ROOT_ID + ' button+button{--g1:#22D3EE;--g2:#818CF8;}' +
     'body[data-ds-dark-theme] #' + ROOT_ID + ' button.is-copied{--g1:#34D399;--g2:#2DD4BF;}' +
     'body[data-ds-dark-theme] #' + ROOT_ID + ' button.is-copied .dsh-quote-ink,' +
     'body[data-ds-dark-theme] #' + ROOT_ID + ' button.is-copied:hover .dsh-quote-ink{' +
     'color:#34D399;-webkit-text-fill-color:#34D399;}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + ' button+button::before{background:rgba(255,255,255,.10);}' +
     'body[data-ds-dark-theme] #' + ROOT_ID + ' .dsh-quote-caret{background:rgba(28,28,38,.72);' +
     'filter:drop-shadow(0 -1px 0 rgba(255,255,255,.10));}' +
     'body[data-ds-dark-theme] #' + ROOT_ID + '[data-side="below"] .dsh-quote-caret{' +

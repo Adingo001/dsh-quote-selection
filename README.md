@@ -32,8 +32,11 @@ index.js  →  ctx.on('webserver/index-inject', rows => rows.push({ kind: 'scrip
   「引用」`#4F46E5 → #7C3AED`，「复制引用」`#0891B2 → #4F46E5`。
 - 图标改为内联 SVG，1.5px 描边、14px、与文字间距 6px；描边用 `linearGradient`，stop 颜色取 `var(--g1)` / `var(--g2)`，
   所以两枚图标的渐变可以不同（引用偏紫，复制偏青蓝），深色主题只换变量即可提亮。
-- 工具条材质：`rgba(255,255,255,.72)` + `backdrop-filter: blur(18px) saturate(170%)`，圆角 12px、内边距 5px；
-  阴影 `0 0 0 1px / 0 2px 4px / 0 8px 16px / 0 20px 40px` 四层，外加 `inset 0 1px 0 rgba(255,255,255,.85)` 顶部内高光。
+- 工具条材质：`rgba(255,255,255,.78)` + `backdrop-filter: blur(20px) saturate(180%)`，圆角 16px、内边距 6px、按钮间距 6px；
+  阴影 `0 0 0 1px / 0 2px 8px / 0 6px 44px / 0 22px 48px` 四层，外加 `inset 0 1px 0 rgba(255,255,255,.9)` 顶部内高光。
+- 两个动作各自是**独立 chip**：`rgba(255,255,255,.55)` 底 + `inset 0 0 0 1px rgba(20,20,40,.05)` 发丝内环，圆角 12px；
+  hover 变成 `rgba(99,102,241,.10)` 并加靛蓝内环与外发光，active 再深一档并 `scale(.97)`。
+  因为 chip 自身已经分开，旧的 1px 竖线分隔删掉了。
 - `::after` 叠一层 2% 透明度的 `feTurbulence` 噪点（120px 平铺）。
 - 边框 1px `rgba(20,20,40,.08)`；`::before` 是**沿边框跑的彗星光带**（Border Beam）：
   一条 conic-gradient 从透明拖尾过渡到 `#4F46E5 → #C026D3 → #22D3EE`，末尾是接近白热的光头，
@@ -63,7 +66,7 @@ index.js  →  ctx.on('webserver/index-inject', rows => rows.push({ kind: 'scrip
 - **不加载 web font**：应用本身不带字体资源，引 CDN 只会多一次 swap 闪烁；跨字体回退的抖动改用**固定最小宽度**兜底（引用 74px、复制引用 102px）。
 - 13.5px / `line-height: 1`，主操作「引用」600、次操作「复制引用」500；`letter-spacing: .04em`（全中文文案）。
 - `font-feature-settings: "tnum"`（只影响数字，当前文案无数字不影响外观）。
-- 图标 14px、间距 6px、线宽 1.5px；文字 `padding-top: 1px` 做光学对齐。
+- 图标 15px、间距 7px、线宽 1.6px；文字 `padding-top: 1px` 做光学对齐。
 - 常态 `#2B2F4A`（深色 `#E8E9F5`），hover 才过渡成渐变文字（`-webkit-text-fill-color` → transparent，.25s）。
 - 开启 `-webkit-font-smoothing: antialiased`、`-moz-osx-font-smoothing: grayscale`、`text-rendering: optimizeLegibility`；浅色加 `text-shadow: 0 1px 0 rgba(255,255,255,.6)`，深色去掉。
 - `user-select: none` + `white-space: nowrap`。
