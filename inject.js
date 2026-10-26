@@ -45,7 +45,12 @@
 
   var CSS =
     '@property --dsh-quote-a{syntax:"<angle>";initial-value:0deg;inherits:false;}' +
-    '#' + ROOT_ID + '{position:fixed;z-index:2147483000;display:none;pointer-events:none;}' +
+    // Motion tokens taken from the transitions.dev public scale: micro 80,
+    // quick 150, fast 250, medium 350, slow 400, stagger 40; one smooth-out
+    // curve for every open/close and position change.
+    '#' + ROOT_ID + '{--qt-micro:80ms;--qt-quick:150ms;--qt-fast:250ms;--qt-medium:350ms;--qt-slow:400ms;' +
+    '--qt-stagger:40ms;--qt-ease:cubic-bezier(.22,1,.36,1);' +
+    'position:fixed;z-index:2147483000;display:none;pointer-events:none;}' +
     '#' + ROOT_ID + '[data-open="true"]{display:block;}' +
 
     // ── frosted bar ─────────────────────────────────────────────────────────
@@ -53,9 +58,9 @@
     'pointer-events:auto;' +
     'border-radius:12px;border:1px solid rgba(20,20,40,.08);background:rgba(255,255,255,.72);' +
     '-webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);' +
-    'box-shadow:0 0 0 1px rgba(20,20,40,.06),0 2px 4px rgba(20,20,40,.04),0 8px 16px rgba(20,20,40,.06),' +
+    'box-shadow:0 0 0 1px rgba(20,20,40,.06),0 2px 6px rgba(20,20,40,.05),0 4px 42px rgba(20,20,40,.06),' +
     '0 20px 40px rgba(99,102,241,.14),inset 0 1px 0 rgba(255,255,255,.85);' +
-    'animation:dsh-quote-in 180ms cubic-bezier(.2,.9,.3,1.2) both;}' +
+    'animation:dsh-quote-in var(--qt-fast) var(--qt-ease) both;}' +
 
     // long conic arc, masked to the 1px border, one lap on appear and on hover
     '#' + ROOT_ID + '>div::before{content:"";position:absolute;inset:-1px;border-radius:12px;padding:1px;' +
@@ -67,6 +72,9 @@
     '-webkit-mask-composite:xor;mask-composite:exclude;}' +
     '#' + ROOT_ID + '>div.is-sweeping::before{animation:dsh-quote-sweep 2s ease-in-out both;}' +
     '#' + ROOT_ID + '>div:hover::before{animation:dsh-quote-sweep-hover 1.2s ease-in-out both;}' +
+    // 40ms item stagger on open, matching the scale's stagger token.
+    '#' + ROOT_ID + '>div.is-sweeping .dsh-quote-ink{animation:dsh-quote-item var(--qt-fast) var(--qt-ease) both;}' +
+    '#' + ROOT_ID + '>div.is-sweeping button+button .dsh-quote-ink{animation-delay:var(--qt-stagger);}' +
 
     // grain
     '#' + ROOT_ID + '>div::after{content:"";position:absolute;inset:0;border-radius:12px;' +
@@ -75,7 +83,8 @@
     // ── buttons ─────────────────────────────────────────────────────────────
     '#' + ROOT_ID + ' button{position:relative;margin:0;border:0;background:transparent;padding:0;' +
     'border-radius:8px;cursor:pointer;white-space:nowrap;' +
-    '--g1:#4F46E5;--g2:#7C3AED;transition:transform .12s ease;}' +
+    '--g1:#4F46E5;--g2:#7C3AED;' +
+    'transition:background-color 160ms ease,box-shadow 160ms ease,transform 120ms ease;}' +
     '#' + ROOT_ID + ' button+button{--g1:#0891B2;--g2:#4F46E5;}' +
     '#' + ROOT_ID + ' button:active{transform:scale(.97);}' +
     '#' + ROOT_ID + ' button:focus-visible{outline:2px solid #818CF8;outline-offset:2px;}' +
@@ -105,7 +114,8 @@
     'text-shadow:0 1px 0 rgba(255,255,255,.6);' +
     'background-image:linear-gradient(100deg,var(--g1),var(--g2));' +
     '-webkit-background-clip:text;background-clip:text;' +
-    'transition:-webkit-text-fill-color .25s ease,color .25s ease;}' +
+    'transition:-webkit-text-fill-color var(--qt-quick) var(--qt-ease),' +
+    'color var(--qt-quick) var(--qt-ease);}' +
     // Primary action is heavier; fixed minimums keep the bar from resizing when
     // the font stack resolves to a different face.
     '#' + ROOT_ID + ' button:first-child .dsh-quote-ink{font-weight:600;min-width:74px;}' +
@@ -124,7 +134,7 @@
     '#' + ROOT_ID + ' .is-copied .dsh-quote-icon.is-check{display:inline;}' +
     '#' + ROOT_ID + ' .is-copied .dsh-quote-icon.is-copy{display:none;}' +
     '#' + ROOT_ID + ' .dsh-quote-icon.is-check path{stroke-dasharray:1;stroke-dashoffset:1;' +
-    'transition:stroke-dashoffset .3s ease;}' +
+    'transition:stroke-dashoffset var(--qt-slow) var(--qt-ease);}' +
     '#' + ROOT_ID + ' .is-copied .dsh-quote-icon.is-check path{stroke-dashoffset:0;}' +
 
     // ── caret ───────────────────────────────────────────────────────────────
@@ -138,9 +148,10 @@
     // ── motion ──────────────────────────────────────────────────────────────
     '@keyframes dsh-quote-in{from{opacity:0;transform:translateY(6px) scale(.96);}' +
     'to{opacity:1;transform:translateY(0) scale(1);}}' +
+    '@keyframes dsh-quote-item{from{opacity:0;transform:translateY(2px);}to{opacity:1;transform:none;}}' +
     '@keyframes dsh-quote-sweep{from{--dsh-quote-a:0turn;}to{--dsh-quote-a:1turn;}}' +
     '@keyframes dsh-quote-sweep-hover{from{--dsh-quote-a:0turn;}to{--dsh-quote-a:1turn;}}' +
-    '#' + ROOT_ID + '.is-closing>div{opacity:0;transition:opacity .18s ease;}' +
+    '#' + ROOT_ID + '.is-closing>div{opacity:0;transition:opacity var(--qt-quick) var(--qt-ease);}' +
 
     // ── selection ───────────────────────────────────────────────────────────
     '::selection{background:rgba(129,140,248,.22);color:inherit;}' +
@@ -172,6 +183,7 @@
     '#' + ROOT_ID + '>div{animation:none;}' +
     '#' + ROOT_ID + '>div::before,#' + ROOT_ID + '>div.is-sweeping::before,' +
     '#' + ROOT_ID + '>div:hover::before{animation:none;}' +
+    '#' + ROOT_ID + '>div.is-sweeping .dsh-quote-ink{animation:none;}' +
     '#' + ROOT_ID + ' button::after{display:none;}' +
     '#' + ROOT_ID + ' button:active{transform:none;}}'
 
@@ -348,6 +360,8 @@
       var anchorX = rect.left + rect.width / 2 - left
       anchorX = Math.max(14, Math.min(anchorX, w - 14))
       caret.style.left = Math.round(anchorX - 6) + 'px'
+      // Grow out of the caret, not out of the bar's centre.
+      bar.style.transformOrigin = Math.round(anchorX) + 'px ' + (above ? '100%' : '0%')
 
       // One lap of the border highlight for the first two seconds.
       bar.classList.remove('is-sweeping')

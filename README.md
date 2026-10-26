@@ -39,7 +39,11 @@ index.js  →  ctx.on('webserver/index-inject', rows => rows.push({ kind: 'scrip
   配合 `mask-composite` 只留在边框上，`@property --dsh-quote-a` 驱动角度：出现后 2s 绕一圈，hover 再绕一圈，其余时间静止。
 - 按钮 hover 有跟随鼠标的柔光：`radial-gradient(80px at var(--mx) var(--my), rgba(99,102,241,.14), transparent)`，
   `--mx/--my` 由 `mousemove` 写入；active 时 `scale(.97)`。
-- 出现动画 180ms，`cubic-bezier(.2,.9,.3,1.2)`，从下方 6px、`scale(.96)` 弹出。
+- 动效沿用 transitions.dev 公开的 motion scale：`--qt-micro 80 / quick 150 / fast 250 / medium 350 / slow 400ms`、`--qt-stagger 40ms`，统一缓动 `cubic-bezier(.22,1,.36,1)`。
+  - 入场：`fast`（250ms）smooth-out，`translateY(6px) scale(.96)` → 归位，`transform-origin` 设在箭头锚点，从选区方向长出来；
+  - 两个按钮各延迟 `stagger`（40ms）依次浮现；
+  - hover 背景/阴影 160ms ease，文字渐显 `quick`（150ms），✓ 描绘 `slow`（400ms），收起 `quick`。
+- 材质阴影里的环境层改用同站 `0 4px 42px rgba(20,20,40,.06)`，替换原来较硬的 `0 8px 16px`。
 - 复制成功：图标换成 ✓（`pathLength=1` + `stroke-dashoffset` 300ms 描绘），文字变「已复制」`#059669`，1.5s 后淡出收起。
 - 定位：默认在选区上方居中，带 12×8 的毛玻璃三角箭头指向选区；上方空间不足翻到下方，左右与上下都做视口钳制。
 - 选区高亮 `rgba(129,140,248,.22)`；`::highlight` 目前只支持可继承的文字属性，`border-radius` 不生效，所以没走 Custom Highlight API。
