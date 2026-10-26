@@ -35,12 +35,12 @@ index.js  →  ctx.on('webserver/index-inject', rows => rows.push({ kind: 'scrip
 - 工具条材质：`rgba(255,255,255,.72)` + `backdrop-filter: blur(18px) saturate(170%)`，圆角 12px、内边距 5px；
   阴影 `0 0 0 1px / 0 2px 4px / 0 8px 16px / 0 20px 40px` 四层，外加 `inset 0 1px 0 rgba(255,255,255,.85)` 顶部内高光。
 - `::after` 叠一层 2% 透明度的 `feTurbulence` 噪点（120px 平铺）。
-- 边框 1px `rgba(20,20,40,.08)`；`::before` 是**液态金属环**：两层 conic-gradient 叠在一起——
-  一层宽虹彩带（`#E0E7FF → #A5B4FC → #C084FC → #7DD3FC`），一层很窄的反光片以 `-1.6×` 反向旋转，
-  `mask-composite` 裁到 1px 边框上，`@property --dsh-quote-a` 驱动 14s 一圈（hover 提速到 7s）。
-  两层都以 `at var(--mxp) var(--myp)` 为中心，鼠标移动时**金属环会朝指针方向弯折**。
-  > `metal-fx` 本体是 React 组件（peerDeps 只有 react/react-dom），注入脚本里没有可用的 React 实例，
-  > 因此这里按它的视觉规格原生复刻，而不是引入整个 React 运行时。
+- 边框 1px `rgba(20,20,40,.08)`；`::before` 是**沿边框跑的彗星光带**（Border Beam）：
+  一条 conic-gradient 从透明拖尾过渡到 `#4F46E5 → #C026D3 → #22D3EE`，末尾是接近白热的光头，
+  `mask-composite` 裁到 1px 边框上，再用两层 `drop-shadow` 做辉光（对应 `strength`）。
+  `@property --dsh-quote-a` 驱动 4.5s 一圈，hover 提速到 2.6s；`--beam-arc` 控制弧长
+  （`data-beam="sm"` 38°、`line` 16°，默认 md 62°），对应库里的 `size` 属性。
+  > `border-beam` 本体同样是 React 组件（peerDeps 只有 react/react-dom），这里按它的视觉规格原生复刻。
 
 - 按钮 hover 有跟随鼠标的柔光：`radial-gradient(80px at var(--mx) var(--my), rgba(99,102,241,.14), transparent)`，
   `--mx/--my` 由 `mousemove` 写入；active 时 `scale(.97)`。

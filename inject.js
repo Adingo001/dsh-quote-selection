@@ -62,25 +62,30 @@
     '0 20px 40px rgba(99,102,241,.14),inset 0 1px 0 rgba(255,255,255,.85);' +
     'animation:dsh-quote-in var(--qt-fast) var(--qt-ease) both;}' +
 
-    // ── liquid-metal ring ───────────────────────────────────────────────────
-    // Two conic layers masked to the 1px border: a broad iridescent band and a
-    // narrow specular slice counter-rotating over it, so the highlight wanders
-    // around the ring instead of sweeping once. Both are centred on the cursor
-    // (`at var(--mxp) var(--myp)`), which bends the ring toward the pointer.
+    // ── border beam ─────────────────────────────────────────────────────────
+    // One comet riding the 1px border: a long fading tail into a hot white
+    // head, masked to the ring and bloomed with layered drop-shadows. Sizes
+    // follow the library's `size` prop through --beam-arc (md 62deg, sm 38deg,
+    // line 16deg); colour follows --beam-* so variants stay one declaration.
     '#' + ROOT_ID + '>div::before{content:"";position:absolute;inset:-1px;border-radius:12px;padding:1px;' +
-    'pointer-events:none;--mxp:50%;--myp:50%;' +
-    'background:' +
-    'conic-gradient(from var(--dsh-quote-a) at var(--mxp) var(--myp),' +
-    'transparent 0deg,rgba(224,231,255,.95) 42deg,#A5B4FC 88deg,#C084FC 138deg,' +
-    '#7DD3FC 186deg,rgba(224,231,255,.7) 238deg,transparent 296deg),' +
-    'conic-gradient(from calc(var(--dsh-quote-a) * -1.6) at var(--mxp) var(--myp),' +
-    'transparent 0deg,rgba(255,255,255,.9) 14deg,rgba(255,255,255,.25) 34deg,transparent 68deg);' +
+    'pointer-events:none;' +
+    '--beam-arc:62deg;' +
+    'background:conic-gradient(from var(--dsh-quote-a),' +
+    'transparent 0deg,' +
+    'transparent calc(360deg - var(--beam-arc)),' +
+    'rgba(79,70,229,.15) calc(360deg - var(--beam-arc) * .72),' +
+    'rgba(79,70,229,.85) calc(360deg - var(--beam-arc) * .42),' +
+    '#C026D3 calc(360deg - var(--beam-arc) * .2),' +
+    '#22D3EE calc(360deg - var(--beam-arc) * .07),' +
+    'rgba(255,255,255,.95) 360deg);' +
     '-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);' +
     'mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);' +
     '-webkit-mask-composite:xor;mask-composite:exclude;' +
-    'filter:saturate(1.2);' +
-    'animation:dsh-quote-metal 14s linear infinite;}' +
-    '#' + ROOT_ID + '>div:hover::before{animation-duration:7s;}' +
+    'filter:drop-shadow(0 0 3px rgba(192,38,211,.45)) drop-shadow(0 0 9px rgba(79,70,229,.35));' +
+    'animation:dsh-quote-beam 4.5s linear infinite;}' +
+    '#' + ROOT_ID + '>div[data-beam="sm"]::before{--beam-arc:38deg;}' +
+    '#' + ROOT_ID + '>div[data-beam="line"]::before{--beam-arc:16deg;}' +
+    '#' + ROOT_ID + '>div:hover::before{animation-duration:2.6s;}' +
     // 40ms item stagger on open, matching the scale's stagger token.
     '#' + ROOT_ID + '>div.is-sweeping .dsh-quote-ink{animation:dsh-quote-item var(--qt-fast) var(--qt-ease) both;}' +
     '#' + ROOT_ID + '>div.is-sweeping button+button .dsh-quote-ink{animation-delay:var(--qt-stagger);}' +
@@ -158,7 +163,7 @@
     '@keyframes dsh-quote-in{from{opacity:0;transform:translateY(6px) scale(.96);}' +
     'to{opacity:1;transform:translateY(0) scale(1);}}' +
     '@keyframes dsh-quote-item{from{opacity:0;transform:translateY(2px);}to{opacity:1;transform:none;}}' +
-    '@keyframes dsh-quote-metal{from{--dsh-quote-a:0deg;}to{--dsh-quote-a:360deg;}}' +
+    '@keyframes dsh-quote-beam{from{--dsh-quote-a:0deg;}to{--dsh-quote-a:360deg;}}' +
     '#' + ROOT_ID + '.is-closing>div{opacity:0;transition:opacity var(--qt-quick) var(--qt-ease);}' +
 
     // ── selection ───────────────────────────────────────────────────────────
@@ -590,13 +595,6 @@
       var rect = btn.getBoundingClientRect()
       btn.style.setProperty('--mx', Math.round(event.clientX - rect.left) + 'px')
       btn.style.setProperty('--my', Math.round(event.clientY - rect.top) + 'px')
-      // The metal ring centres its conic gradients on the pointer, so the
-      // highlight bends toward the cursor instead of orbiting a fixed point.
-      var frame = bar.getBoundingClientRect()
-      if (frame.width > 0 && frame.height > 0) {
-        bar.style.setProperty('--mxp', (((event.clientX - frame.left) / frame.width) * 100).toFixed(2) + '%')
-        bar.style.setProperty('--myp', (((event.clientY - frame.top) / frame.height) * 100).toFixed(2) + '%')
-      }
     }
 
     // Keep the transcript selection alive while the toolbar is pressed.
