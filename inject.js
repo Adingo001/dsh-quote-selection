@@ -95,18 +95,27 @@
     'pointer-events:none;opacity:.02;background-image:' + NOISE + ';background-size:120px 120px;}' +
 
     // ── buttons ─────────────────────────────────────────────────────────────
-    // Each action is its own chip: a faint surface with a hairline inset ring,
-    // so the toolbar reads as two controls instead of one slab.
-    '#' + ROOT_ID + ' button{position:relative;margin:0;border:0;padding:0;' +
-    'border-radius:12px;cursor:pointer;white-space:nowrap;' +
-    'background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 1px rgba(20,20,40,.05);' +
+    // The actions are tabs, not chips: a pill behind them carries the hover
+    // surface and slides between the two, so the buttons themselves stay
+    // transparent and only their ink changes colour.
+    '#' + ROOT_ID + ' button{position:relative;margin:0;border:0;padding:0;z-index:1;' +
+    'border-radius:12px;cursor:pointer;white-space:nowrap;background:transparent;' +
     '--g1:#4F46E5;--g2:#7C3AED;' +
-    'transition:background-color 160ms ease,box-shadow 160ms ease,transform 120ms ease;}' +
-    '#' + ROOT_ID + ' button:hover{background:rgba(99,102,241,.10);' +
-    'box-shadow:inset 0 0 0 1px rgba(129,140,248,.28),0 0 12px rgba(99,102,241,.12);}' +
+    'transition:transform 120ms ease;}' +
     '#' + ROOT_ID + ' button+button{--g1:#0891B2;--g2:#4F46E5;}' +
-    '#' + ROOT_ID + ' button:active{transform:scale(.97);background:rgba(99,102,241,.16);}' +
+    '#' + ROOT_ID + ' button:active{transform:scale(.97);}' +
     '#' + ROOT_ID + ' button:focus-visible{outline:2px solid #818CF8;outline-offset:2px;}' +
+
+    // ── sliding pill (Tabs sliding) ─────────────────────────────────────────
+    // width/height/transform are written by JS from the hovered tab's
+    // offset* box; CSS owns the 250ms smooth-out tween, as in the recipe.
+    '#' + ROOT_ID + ' .dsh-quote-pill{position:absolute;left:0;top:0;width:0;height:0;' +
+    'border-radius:12px;z-index:0;pointer-events:none;opacity:0;' +
+    'background:rgba(255,255,255,.9);' +
+    'box-shadow:inset 0 0 0 1px rgba(20,20,40,.06),0 1px 2px rgba(20,20,40,.06),' +
+    '0 6px 16px rgba(99,102,241,.12);' +
+    'transition:transform var(--qt-fast) var(--qt-ease),width var(--qt-fast) var(--qt-ease),' +
+    'height var(--qt-fast) var(--qt-ease),opacity var(--qt-micro) linear;}' +
 
     // cursor-following glow, behind the ink
     '#' + ROOT_ID + ' button::after{content:"";position:absolute;inset:0;border-radius:12px;z-index:0;' +
@@ -181,10 +190,10 @@
     '0 20px 40px rgba(139,92,246,.18),inset 0 1px 0 rgba(255,255,255,.08);}' +
     'body[data-ds-dark-theme] #' + ROOT_ID + ' .dsh-quote-ink{color:#E8E9F5;-webkit-text-fill-color:#E8E9F5;' +
     'text-shadow:none;}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + ' button{--g1:#818CF8;--g2:#A78BFA;' +
-    'background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);}' +
-    'body[data-ds-dark-theme] #' + ROOT_ID + ' button:hover{background:rgba(129,140,248,.16);' +
-    'box-shadow:inset 0 0 0 1px rgba(129,140,248,.35),0 0 12px rgba(129,140,248,.15);}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + ' button{--g1:#818CF8;--g2:#A78BFA;}' +
+    'body[data-ds-dark-theme] #' + ROOT_ID + ' .dsh-quote-pill{background:rgba(255,255,255,.10);' +
+    'box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),0 1px 2px rgba(0,0,0,.4),' +
+    '0 6px 16px rgba(139,92,246,.18);}' +
     'body[data-ds-dark-theme] #' + ROOT_ID + ' button+button{--g1:#22D3EE;--g2:#818CF8;}' +
     'body[data-ds-dark-theme] #' + ROOT_ID + ' button.is-copied{--g1:#34D399;--g2:#2DD4BF;}' +
     'body[data-ds-dark-theme] #' + ROOT_ID + ' button.is-copied .dsh-quote-ink,' +
@@ -201,6 +210,7 @@
     '#' + ROOT_ID + '>div::before,#' + ROOT_ID + '>div:hover::before{animation:none;}' +
     '#' + ROOT_ID + '>div.is-sweeping .dsh-quote-ink{animation:none;}' +
     '#' + ROOT_ID + ' button::after{display:none;}' +
+    '#' + ROOT_ID + ' .dsh-quote-pill{transition:none;}' +
     '#' + ROOT_ID + ' button:active{transform:none;}}'
 
   /** Nearest transcript element for a node, or null outside the transcript. */
@@ -338,6 +348,11 @@
     var caret = document.createElement('span')
     caret.className = 'dsh-quote-caret'
 
+    var pill = document.createElement('span')
+    pill.className = 'dsh-quote-pill'
+    pill.setAttribute('aria-hidden', 'true')
+
+    bar.appendChild(pill)
     bar.appendChild(quoteBtn)
     bar.appendChild(copyBtn)
     bar.appendChild(caret)
@@ -387,6 +402,37 @@
       sweepTimer = window.setTimeout(function () {
         bar.classList.remove('is-sweeping')
       }, 2000)
+
+      // Seed the pill under the first action without tweening, then keep it
+      // invisible until the pointer actually enters a tab.
+      pillTo(quoteBtn, false)
+      pill.style.opacity = '0'
+    }
+
+    /**
+     * Slide the tabs pill onto a button. Follows the transitions.dev recipe:
+     * JS writes the measured box, CSS owns the 250ms smooth-out tween; an
+     * unanimated call suspends the transition, writes, and forces a reflow.
+     */
+    function pillTo(btn, animate) {
+      if (!btn) {
+        pill.style.opacity = '0'
+        return
+      }
+      if (!animate) {
+        var suspended = pill.style.transition
+        pill.style.transition = 'none'
+        pill.style.transform = 'translate(' + btn.offsetLeft + 'px,' + btn.offsetTop + 'px)'
+        pill.style.width = btn.offsetWidth + 'px'
+        pill.style.height = btn.offsetHeight + 'px'
+        void pill.offsetWidth
+        pill.style.transition = suspended
+      } else {
+        pill.style.transform = 'translate(' + btn.offsetLeft + 'px,' + btn.offsetTop + 'px)'
+        pill.style.width = btn.offsetWidth + 'px'
+        pill.style.height = btn.offsetHeight + 'px'
+      }
+      pill.style.opacity = '1'
     }
 
     function refresh() {
@@ -607,6 +653,14 @@
       event.stopPropagation()
     })
     bar.addEventListener('mousemove', onMouseMove)
+    bar.addEventListener('mouseover', function (event) {
+      var target = event.target
+      var btn = target && typeof target.closest === 'function' ? target.closest('button') : null
+      if (btn && bar.contains(btn)) pillTo(btn, true)
+    })
+    bar.addEventListener('mouseleave', function () {
+      pillTo(null, false)
+    })
     quoteBtn.addEventListener('click', function (event) {
       event.preventDefault()
       event.stopPropagation()
@@ -636,6 +690,7 @@
           buttons: document.querySelectorAll('#' + ROOT_ID + ' button').length,
           icons: document.querySelectorAll('#' + ROOT_ID + ' svg').length,
           caret: !!document.querySelector('#' + ROOT_ID + ' .dsh-quote-caret'),
+          pill: !!document.querySelector('#' + ROOT_ID + ' .dsh-quote-pill'),
           // Regression guard: the root disables pointer events, so the bar must
           // opt back in or nothing in it can be clicked.
           clickable: (function () {

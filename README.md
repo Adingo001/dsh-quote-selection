@@ -34,9 +34,10 @@ index.js  →  ctx.on('webserver/index-inject', rows => rows.push({ kind: 'scrip
   所以两枚图标的渐变可以不同（引用偏紫，复制偏青蓝），深色主题只换变量即可提亮。
 - 工具条材质：`rgba(255,255,255,.78)` + `backdrop-filter: blur(20px) saturate(180%)`，圆角 16px、内边距 6px、按钮间距 6px；
   阴影 `0 0 0 1px / 0 2px 8px / 0 6px 44px / 0 22px 48px` 四层，外加 `inset 0 1px 0 rgba(255,255,255,.9)` 顶部内高光。
-- 两个动作各自是**独立 chip**：`rgba(255,255,255,.55)` 底 + `inset 0 0 0 1px rgba(20,20,40,.05)` 发丝内环，圆角 12px；
-  hover 变成 `rgba(99,102,241,.10)` 并加靛蓝内环与外发光，active 再深一档并 `scale(.97)`。
-  因为 chip 自身已经分开，旧的 1px 竖线分隔删掉了。
+- 两个动作按 **Tabs sliding** 做：按钮本身透明，背后一块 `dsh-quote-pill` 承担 hover 面，
+  鼠标在两个按钮之间移动时药丸**滑过去**——JS 只写 `offsetLeft/offsetTop/offsetWidth/offsetHeight`，
+  CSS 负责 `250ms var(--qt-ease)` 的 tween（首帧和 resize 时用「关掉 transition → 写值 → 强制 reflow → 恢复」的方式吸附，不会从 0 滑入）。
+  配方来自 `transitions-dev` 的 `free/tabs-sliding.md`（免费档），变量对齐它的 `--tabs-dur / --tabs-ease`。
 - `::after` 叠一层 2% 透明度的 `feTurbulence` 噪点（120px 平铺）。
 - 边框 1px `rgba(20,20,40,.08)`；`::before` 是**沿边框跑的彗星光带**（Border Beam）：
   一条 conic-gradient 从透明拖尾过渡到 `#4F46E5 → #C026D3 → #22D3EE`，末尾是接近白热的光头，
