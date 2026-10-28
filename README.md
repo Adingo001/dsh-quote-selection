@@ -6,6 +6,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-DeepSeek--Harness-purple.svg)](https://github.com/Adingo001/dsh-quote-selection)
 
+<p align="center">
+  <img src="assets/preview.png" alt="dsh-quote-selection preview" width="380" />
+</p>
+
 ---
 
 ## 📖 简介
